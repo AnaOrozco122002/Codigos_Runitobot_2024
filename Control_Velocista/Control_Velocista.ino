@@ -1,6 +1,16 @@
 //Incluir Librerias
 #include <QTRSensors16.h>
+#include <ESP32Servo.h>
 
+
+//TURBINA
+//Creación del Objeto 
+Servo Turbina;
+
+//PIN PARA EL CONTROL DE TURBINA
+const byte Tur=D7;
+float tip=0,tip2=0,aux=999999999;
+bool contur=true;
 
 //Variables para sensores
 #define NUM_SENSORS             16  // Numero de sensores usados
@@ -33,6 +43,8 @@ const int  PWMD = D4;                                             // Definición
 const int  PWMI = D3;     
 
 void setup() {
+  Serial.begin(9600);
+  Serial.println("*************** Proceso de Calibracion de Los Sensores ***************" );
   //Calibración Inicial de Pines Sensor
   for (int i = 0; i < 100; i++){  // make the calibration take about 10 seconds
     qtra.calibrate();       // reads all sensors 10 times at 2.5 ms per six sensors (i.e. ~25 ms per call)
@@ -40,15 +52,27 @@ void setup() {
   
   //Creación del PWM
   CrearPWM();
+
+  //Inicialización de la turbina
+  Inicializacion_turbina();
 }
 
 void loop() {
   //if(Serial.available()) { Sintonia_Bluetooth();} 
+  //Serial.println("Inicio");
   Tinicio    = millis();                                        // toma el valor en milisengundos
   Salida     = Lectura_Sensor();                                // funcion de lectura de la variable salida del  proceso
   Control    = Controlador(Referencia,Salida);                  // funcion de la ley de control 
   Esfuerzo_Control(Control);                                    // funcion encargada de enviar el esfuerzo de control
   Tm = Tiempo_Muestreo(Tinicio); 
+  tip= millis();
+  Serial.println("Girar");
+  Turbina.write(180);
+  delay(5000);
+  Serial.println("Parar");
+  Turbina.write(0);
+  delay(5000);
+
 
 }
 
@@ -59,7 +83,7 @@ float Lectura_Sensor(void) {
   return Salida;                                               // retorno la variable de salidad del proceso normalizada entre 0-1, al olgoritmo de control
 }
 
-//Controlador para Motores
+//Controlador para Motoresu
 float Controlador(float Referencia, float Salida) {                           // Funcion para la ley de control
   float E_derivativo;
   float E_integral;
@@ -105,4 +129,17 @@ void CrearPWM(){
   ledcSetup(Canales[1],Frecuencia,Resolucion); 
   ledcAttachPin(PWMD,Canales[0]);
   ledcAttachPin(PWMI,Canales[1]);
+}
+void Inicializacion_turbina(){
+  //Mensajes de Inicio
+  Serial.println("-------------- Proceso de Calibracion de ESC --------------" );
+  Serial.println("Iniciando ......");
+  Serial.println("ATENCIÓN El motor Iniciara a Girar");
+  //Asignar PIN
+  Turbina.setPeriodHertz(50);
+  Turbina.attach(Tur);//salida PW hacia el contralador de V
+  //Prueba Del Motor
+  Turbina.write(180);
+  delay(1000);
+  Turbina.write(0);
 }

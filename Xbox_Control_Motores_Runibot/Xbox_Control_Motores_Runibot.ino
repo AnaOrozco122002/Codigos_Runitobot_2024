@@ -78,11 +78,11 @@ void loop() {
           digitalWrite(MotorA[1],LOW);
           digitalWrite(MotorA[2],HIGH);
           //Motor B 
-          ledcWrite(Canales[1],500);
+          ledcWrite(Canales[1],700);
           digitalWrite(MotorB[1],HIGH);
           digitalWrite(MotorB[2],LOW);
           //Motor C
-          ledcWrite(Canales[2],500);
+          ledcWrite(Canales[2],700);
           digitalWrite(MotorC[1],HIGH);
           digitalWrite(MotorC[2],LOW);
           //Motor D
@@ -254,7 +254,7 @@ void loop() {
         //Sin gatillos
         if(!(RTrig >50 or LTrig > 50)){
           //Motor A
-          ledcWrite(Canales[0],500);
+          ledcWrite(Canales[0],700);
           digitalWrite(MotorA[1],HIGH);
           digitalWrite(MotorA[2],LOW);
           //Motor B 
@@ -266,7 +266,7 @@ void loop() {
           digitalWrite(MotorC[1],LOW);
           digitalWrite(MotorC[2],HIGH);
           //Motor D
-          ledcWrite(Canales[3],500);
+          ledcWrite(Canales[3],700);
           digitalWrite(MotorD[1],HIGH);
           digitalWrite(MotorD[2],LOW);
           //Impresión
