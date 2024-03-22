@@ -7,7 +7,7 @@
 //Varaibles
 
 //Valores del Control
-float LHoN=0,R2=0,L2=0;
+float LHoN=0,R2=0,L2=0,CRight=0,CLeft=0;
 
 //Controlador Motores
 const byte MotorA[]={13,27,12};
@@ -55,8 +55,57 @@ void loop() {
     L2=floor(((float)ps5.L2Value()/255)*1023);//Gatillo LT
     bR2=ps5.R2();
     bL2=ps5.L2();
+    CRight=ps5.Right();
+    CLeft=ps5.Left();
+
+
+    //Giro Sobre si mismo
     //Derecha
-    if (LHoN >20) {
+    if(CRight){
+      //Motor A
+      ledcWrite(Canales[0],700);
+      digitalWrite(MotorA[1],LOW);
+      digitalWrite(MotorA[2],HIGH);
+      //Motor B 
+      ledcWrite(Canales[1],700);
+      digitalWrite(MotorB[1],HIGH);
+      digitalWrite(MotorB[2],LOW);
+      //Motor C
+      ledcWrite(Canales[2],700);
+      digitalWrite(MotorC[1],HIGH);
+      digitalWrite(MotorC[2],LOW);
+      //Motor D
+      ledcWrite(Canales[3],700);
+      digitalWrite(MotorD[1],LOW);
+      digitalWrite(MotorD[2],HIGH);
+      //Impresión
+      Serial.println("Derecha Cruceta");
+    }
+    //Izquierda
+    else if (CLeft){
+      //Motor A
+        ledcWrite(Canales[0],700);
+        digitalWrite(MotorA[1],HIGH);
+        digitalWrite(MotorA[2],LOW);
+        //Motor B 
+        ledcWrite(Canales[1],700);
+        digitalWrite(MotorB[1],LOW);
+        digitalWrite(MotorB[2],HIGH);
+        //Motor C
+        ledcWrite(Canales[2],700);
+        digitalWrite(MotorC[1],LOW);
+        digitalWrite(MotorC[2],HIGH);
+        //Motor D
+        ledcWrite(Canales[3],700);
+        digitalWrite(MotorD[1],HIGH);
+        digitalWrite(MotorD[2],LOW);
+        //Impresión
+        Serial.println("Izquierda Cruceta");
+    }
+
+
+    //Derecha
+    else if (LHoN >20) {
 
       //Sin gatillos
       if(!(bR2 or bL2)){
@@ -65,17 +114,17 @@ void loop() {
         digitalWrite(MotorA[1],LOW);
         digitalWrite(MotorA[2],HIGH);
         //Motor B 
-        ledcWrite(Canales[1],300);
+        ledcWrite(Canales[1],700);
         digitalWrite(MotorB[1],HIGH);
         digitalWrite(MotorB[2],LOW);
         //Motor C
-        ledcWrite(Canales[2],300);
+        ledcWrite(Canales[2],700);
         digitalWrite(MotorC[1],HIGH);
         digitalWrite(MotorC[2],LOW);
         //Motor D
         ledcWrite(Canales[3],50);
         digitalWrite(MotorD[1],LOW);
-        digitalWrite(MotorD[2],HIGH);
+          digitalWrite(MotorD[2],HIGH);
         //Impresión
         Serial.println("Derecha Sin Gatillos");
       }
@@ -95,9 +144,9 @@ void loop() {
           velocidades[0] = (velocidades[0] < 0) ? 0 : velocidades[0];
           velocidades[0] = (velocidades[0] > 100) ? 100 : velocidades[0];
           velocidades[1] = (velocidades[1] < 0) ? 0 : velocidades[1];
-          velocidades[1] = (velocidades[1] > 350) ? 350 : velocidades[1];
+          velocidades[1] = (velocidades[1] > 500) ? 500 : velocidades[1];
           velocidades[2] = (velocidades[2] < 0) ? 0 : velocidades[2];
-          velocidades[2] = (velocidades[2] > 350) ? 350 : velocidades[2];
+          velocidades[2] = (velocidades[2] > 500) ? 500 : velocidades[2];
           velocidades[3] = (velocidades[3] < 0) ? 0 : velocidades[3];
           velocidades[3] = (velocidades[3] > 100) ? 100 : velocidades[3];
 
@@ -130,9 +179,9 @@ void loop() {
           //Limitaciones de los Motores
           velocidades[0] = (velocidades[0] < 0) ? 0 : velocidades[0];
           velocidades[1] = (velocidades[1] < 0) ? 0 : velocidades[1];
-          velocidades[1] = (velocidades[1] > 10 && velocidades[1]< 350) ? velocidades[1]+350 : (velocidades[1] >= 700) ? 700 : velocidades[1];
+          velocidades[1] = (velocidades[1] > 10 && velocidades[1]< 500) ? velocidades[1]+500 : (velocidades[1] >= 1000) ? 1000 : velocidades[1];
           velocidades[2] = (velocidades[2] < 0) ? 0 : velocidades[2];
-          velocidades[2] = (velocidades[2] > 10 && velocidades[2]< 350) ? velocidades[2]+350 : (velocidades[2] >= 700) ? 700 : velocidades[2];
+          velocidades[2] = (velocidades[2] > 10 && velocidades[2]< 500) ? velocidades[2]+500 : (velocidades[2] >= 1000) ? 1000 : velocidades[2];
           velocidades[3] = (velocidades[3] < 0) ? 0 : velocidades[3];
 
         
@@ -170,9 +219,9 @@ void loop() {
           velocidades[0] = (velocidades[0] < 0) ? 0 : velocidades[0];
           velocidades[0] = (velocidades[0] > 100) ? 100 : velocidades[0];
           velocidades[1] = (velocidades[1] < 0) ? 0 : velocidades[1];
-          velocidades[1] = (velocidades[1] > 350) ? 350 : velocidades[1];
+          velocidades[1] = (velocidades[1] > 500) ? 500 : velocidades[1];
           velocidades[2] = (velocidades[2] < 0) ? 0 : velocidades[2];
-          velocidades[2] = (velocidades[2] > 350) ? 350 : velocidades[2];
+          velocidades[2] = (velocidades[2] > 500) ? 500 : velocidades[2];
           velocidades[3] = (velocidades[3] < 0) ? 0 : velocidades[3];
           velocidades[3] = (velocidades[3] > 100) ? 100 : velocidades[3];
 
@@ -206,9 +255,9 @@ void loop() {
           //Limitaciones de los Motores
           velocidades[0] = (velocidades[0] < 0) ? 0 : velocidades[0];
           velocidades[1] = (velocidades[1] < 0) ? 0 : velocidades[1];
-          velocidades[1] = (velocidades[1] > 10 && velocidades[1]< 350) ? velocidades[1]+350 : (velocidades[1] >= 700) ? 700 : velocidades[1];
+          velocidades[1] = (velocidades[1] > 10 && velocidades[1]< 500) ? velocidades[1]+500 : (velocidades[1] >= 1000) ? 1000 : velocidades[1];
           velocidades[2] = (velocidades[2] < 0) ? 0 : velocidades[2];
-          velocidades[2] = (velocidades[2] > 10 && velocidades[2]< 350) ? velocidades[2]+350 : (velocidades[2] >= 700) ? 700 : velocidades[2];
+          velocidades[2] = (velocidades[2] > 10 && velocidades[2]< 500) ? velocidades[2]+500 : (velocidades[2] >= 1000) ? 1000 : velocidades[2];
           velocidades[3] = (velocidades[3] < 0) ? 0 : velocidades[3];
 
         
@@ -241,7 +290,7 @@ void loop() {
       //Sin gatillos
       if(!(bR2 or bL2)){
         //Motor A
-        ledcWrite(Canales[0],300);
+        ledcWrite(Canales[0],700);
         digitalWrite(MotorA[1],HIGH);
         digitalWrite(MotorA[2],LOW);
         //Motor B 
@@ -253,7 +302,7 @@ void loop() {
         digitalWrite(MotorC[1],LOW);
         digitalWrite(MotorC[2],HIGH);
         //Motor D
-        ledcWrite(Canales[3],300);
+        ledcWrite(Canales[3],700);
         digitalWrite(MotorD[1],HIGH);
         digitalWrite(MotorD[2],LOW);
         //Impresión
@@ -271,13 +320,13 @@ void loop() {
           velocidades[3]=R2;
           //Limitaciones de los Motores
           velocidades[0] = (velocidades[0] < 0) ? 0 : velocidades[0];
-          velocidades[0] = (velocidades[0] > 350) ? 350 : velocidades[0];
+          velocidades[0] = (velocidades[0] > 500) ? 500 : velocidades[0];
           velocidades[1] = (velocidades[1] < 0) ? 0 : velocidades[1];
           velocidades[1] = (velocidades[1] > 100) ? 100 : velocidades[1];
           velocidades[2] = (velocidades[2] < 0) ? 0 : velocidades[2];
           velocidades[2] = (velocidades[2] > 100) ? 100 : velocidades[2];
           velocidades[3] = (velocidades[3] < 0) ? 0 : velocidades[3];
-          velocidades[3] = (velocidades[3] > 350) ? 350 : velocidades[3];
+          velocidades[3] = (velocidades[3] > 500) ? 500 : velocidades[3];
 
           //Motor A
           ledcWrite(Canales[0],velocidades[0]);
@@ -308,12 +357,12 @@ void loop() {
 
           //Limitaciones de los Motores
           velocidades[0] = (velocidades[0] < 0) ? 0 : velocidades[0];
-          velocidades[0] = (velocidades[0] > 10 && velocidades[0]< 350) ? velocidades[0]+350 : (velocidades[0] >= 700) ? 700 : velocidades[0];
+          velocidades[0] = (velocidades[0] > 10 && velocidades[0]< 500) ? velocidades[0]+500 : (velocidades[0] >= 1000) ? 1000 : velocidades[0];
           velocidades[1] = (velocidades[1] < 0) ? 0 : velocidades[1];
           velocidades[2] = (velocidades[2] < 0) ? 0 : velocidades[2];
           velocidades[3] = (velocidades[3] < 0) ? 0 : velocidades[3];
-          velocidades[3] = (velocidades[3] > 10 && velocidades[3]< 350) ? velocidades[3]+350 : (velocidades[3] >= 700) ? 700 : velocidades[3];
-          
+          velocidades[3] = (velocidades[3] > 10 && velocidades[3]< 500) ? velocidades[3]+500 : (velocidades[3] >= 1000) ? 1000 : velocidades[3];
+        
 
         
           //Motor A
@@ -350,13 +399,13 @@ void loop() {
           velocidades[3]=L2;
           //Limitaciones de los Motores
           velocidades[0] = (velocidades[0] < 0) ? 0 : velocidades[0];
-          velocidades[0] = (velocidades[0] > 350) ? 350 : velocidades[0];
+          velocidades[0] = (velocidades[0] > 500) ? 500 : velocidades[0];
           velocidades[1] = (velocidades[1] < 0) ? 0 : velocidades[1];
           velocidades[1] = (velocidades[1] > 100) ? 100 : velocidades[1];
           velocidades[2] = (velocidades[2] < 0) ? 0 : velocidades[2];
           velocidades[2] = (velocidades[2] > 100) ? 100 : velocidades[2];
           velocidades[3] = (velocidades[3] < 0) ? 0 : velocidades[3];
-          velocidades[3] = (velocidades[3] > 350) ? 350 : velocidades[3];
+          velocidades[3] = (velocidades[3] > 500) ? 500 : velocidades[3];
 
           //Motor A
           ledcWrite(Canales[0],velocidades[0]);
@@ -388,11 +437,11 @@ void loop() {
 
           //Limitaciones de los Motores
           velocidades[0] = (velocidades[0] < 0) ? 0 : velocidades[0];
-          velocidades[0] = (velocidades[0] > 10 && velocidades[0]< 350) ? velocidades[0]+350 : (velocidades[0] >= 700) ? 700 : velocidades[0];
+          velocidades[0] = (velocidades[0] > 10 && velocidades[0]< 500) ? velocidades[0]+500 : (velocidades[0] >= 1000) ? 1000 : velocidades[0];
           velocidades[1] = (velocidades[1] < 0) ? 0 : velocidades[1];
           velocidades[2] = (velocidades[2] < 0) ? 0 : velocidades[2];
           velocidades[3] = (velocidades[3] < 0) ? 0 : velocidades[3];
-          velocidades[3] = (velocidades[3] > 10 && velocidades[3]< 350) ? velocidades[3]+350 : (velocidades[3] >= 700) ? 700 : velocidades[3];
+          velocidades[3] = (velocidades[3] > 10 && velocidades[3]< 500) ? velocidades[3]+500 : (velocidades[3] >= 1000) ? 1000 : velocidades[3];
           
 
         
@@ -432,13 +481,13 @@ void loop() {
 
         //Limitaciones de los Motores
         velocidades[0] = (velocidades[0] < 0) ? 0 : velocidades[0];
-        velocidades[0] = (velocidades[0] > 600) ? 600 : velocidades[0];
+        velocidades[0] = (velocidades[0] > 800) ? 800 : velocidades[0];
         velocidades[1] = (velocidades[1] < 0) ? 0 : velocidades[1];
-        velocidades[1] = (velocidades[1] > 600) ? 600 : velocidades[1];
+        velocidades[1] = (velocidades[1] > 800) ? 800 : velocidades[1];
         velocidades[2] = (velocidades[2] < 0) ? 0 : velocidades[2];
-        velocidades[2] = (velocidades[2] > 600) ? 600 : velocidades[2];
+        velocidades[2] = (velocidades[2] > 800) ? 800 : velocidades[2];
         velocidades[3] = (velocidades[3] < 0) ? 0 : velocidades[3];
-        velocidades[3] = (velocidades[3] > 600) ? 600 : velocidades[3];
+        velocidades[3] = (velocidades[3] > 800) ? 800 : velocidades[3];
 
         //Motor A
         ledcWrite(Canales[0],velocidades[0]);
@@ -509,13 +558,13 @@ void loop() {
         Serial.println(L2);
         //Limitaciones de los Motores
         velocidades[0] = (velocidades[0] < 0) ? 0 : velocidades[0];
-        velocidades[0] = (velocidades[0] > 600) ? 600 : velocidades[0];
+        velocidades[0] = (velocidades[0] > 800) ? 800 : velocidades[0];
         velocidades[1] = (velocidades[1] < 0) ? 0 : velocidades[1];
-        velocidades[1] = (velocidades[1] > 600) ? 600 : velocidades[1];
+        velocidades[1] = (velocidades[1] > 800) ? 800 : velocidades[1];
         velocidades[2] = (velocidades[2] < 0) ? 0 : velocidades[2];
-        velocidades[2] = (velocidades[2] > 600) ? 600 : velocidades[2];
+        velocidades[2] = (velocidades[2] > 800) ? 800 : velocidades[2];
         velocidades[3] = (velocidades[3] < 0) ? 0 : velocidades[3];
-        velocidades[3] = (velocidades[3] > 600) ? 600 : velocidades[3];
+        velocidades[3] = (velocidades[3] > 800) ? 800 : velocidades[3];
 
         //Motor A
         ledcWrite(Canales[0],velocidades[0]);
@@ -634,6 +683,7 @@ void Inicialiar_Pines(){
   pinMode(MotorD[0],OUTPUT);
   pinMode(MotorD[1],OUTPUT);
   pinMode(MotorD[2],OUTPUT);
+  pinMode(Led,OUTPUT);
 }
 
 void CrearPWM(){

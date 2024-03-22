@@ -3,24 +3,26 @@
 #include <ESP32Servo.h>
 
 
+//Modulo de Inicio
+const byte MInit=D6;
+int Estado;
+
 //TURBINA
 //Creación del Objeto 
-Servo Turbina;
+Servo myTurbina;
 
 //PIN PARA EL CONTROL DE TURBINA
-const byte Tur=D7;
-float tip=0,tip2=0,aux=999999999;
-bool contur=true;
+const byte Tur=D5;
 
 //Variables para sensores
 #define NUM_SENSORS             16  // Numero de sensores usados
 #define NUM_SAMPLES_PER_SENSOR  3  // Numero de muestras
-#define IN_PIN             A1  // PIN de entrada del multiplexor
+#define IN_PIN             A2  // PIN de entrada del multiplexor
 
 
-// Inicialización del sensor, digitales D8,D9,D5,D6
+// Inicialización del sensor, digitales D9,D10,D0,D1
 QTRSensorsMux qtra((unsigned char[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, 
-  NUM_SENSORS, NUM_SAMPLES_PER_SENSOR, (unsigned char) IN_PIN, (unsigned char[]){D8,D9,D5,D6} );
+  NUM_SENSORS, NUM_SAMPLES_PER_SENSOR, (unsigned char) IN_PIN, (unsigned char[]){D9,D10,D0,D1} );
 unsigned int sensorValues[NUM_SENSORS];
 
 
@@ -39,17 +41,18 @@ const uint16_t Frecuencia = 5000;
 const byte Canales[] ={0,1};
 const byte Resolucion = 10;
 
-const int  PWMD = D4;                                             // Definición Pin 6 PWM Motor Derecho
-const int  PWMI = D3;     
+const int  PWMD = D7;                                             // Definición Pin 6 PWM Motor Derecho
+const int  PWMI = D4;     
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("*************** Proceso de Calibracion de Los Sensores ***************" );
-  //Calibración Inicial de Pines Sensor
-  for (int i = 0; i < 100; i++){  // make the calibration take about 10 seconds
-    qtra.calibrate();       // reads all sensors 10 times at 2.5 ms per six sensors (i.e. ~25 ms per call)
-  }
-  
+
+  //Inicialización de Pines
+  Inicializacion_Pines();
+
+  //Inicialización de Sensores
+  Inicializacion_Sensores();
+
   //Creación del PWM
   CrearPWM();
 
@@ -60,19 +63,20 @@ void setup() {
 void loop() {
   //if(Serial.available()) { Sintonia_Bluetooth();} 
   //Serial.println("Inicio");
+  Estado=digitalRead(MInit);
+  if(Estado == HIGH){
+    Serial.println("Start");
+  }
+  else{
+    Serial.println("Stop");
+  }
   Tinicio    = millis();                                        // toma el valor en milisengundos
   Salida     = Lectura_Sensor();                                // funcion de lectura de la variable salida del  proceso
   Control    = Controlador(Referencia,Salida);                  // funcion de la ley de control 
   Esfuerzo_Control(Control);                                    // funcion encargada de enviar el esfuerzo de control
   Tm = Tiempo_Muestreo(Tinicio); 
-  tip= millis();
-  Serial.println("Girar");
-  Turbina.write(180);
-  delay(5000);
-  Serial.println("Parar");
-  Turbina.write(0);
-  delay(5000);
-
+  //Serial.println("Girar");
+  myTurbina.write(150);
 
 }
 
@@ -110,13 +114,13 @@ void Esfuerzo_Control(float Control) {                            //envia el esf
   ledcWrite(Canales[1], constrain(abs(s2), 0.0, 1.0)* Vmax);
 
    if( s1 <= 0.0 ){// Motor Derecho
-    digitalWrite(D10,LOW);}
-  else{digitalWrite(D10,HIGH);}                   
+    digitalWrite(D8,LOW);}
+  else{digitalWrite(D8,HIGH);}                   
    
   
   if( s2 <= 0.0 ){ //Motor Izquierdo
-    digitalWrite(D2,LOW);}
-  else{digitalWrite(D2,HIGH);}
+    digitalWrite(D3,LOW);}
+  else{digitalWrite(D3,HIGH);}
 } 
 
 unsigned long int Tiempo_Muestreo(unsigned long int Tinicio){//, unsigned int Tm){ // Funcion que asegura que el tiempo de muestreo sea el mismo siempre
@@ -135,11 +139,27 @@ void Inicializacion_turbina(){
   Serial.println("-------------- Proceso de Calibracion de ESC --------------" );
   Serial.println("Iniciando ......");
   Serial.println("ATENCIÓN El motor Iniciara a Girar");
-  //Asignar PIN
-  Turbina.setPeriodHertz(50);
-  Turbina.attach(Tur);//salida PW hacia el contralador de V
-  //Prueba Del Motor
-  Turbina.write(180);
-  delay(1000);
-  Turbina.write(0);
+  ESP32PWM::allocateTimer(2);
+  myTurbina.setPeriodHertz(50);              //frecuencia de la señal cuadrada
+  myTurbina.attach(Tur, 1000, 2000);  //(pin,min us de pulso, máx us de pulso)
+  myTurbina.write(0);                        //Preparación de la turbina
+  delay(2000);
+}
+void Inicializacion_Sensores(){
+  //Mensajes de Inicio
+  Serial.println("-------------- Proceso de Calibracion de Los Sensores --------------" );
+  Serial.println("Iniciando ......");
+  //Calibración Inicial de Pines Sensor
+  for (int i = 0; i < 100; i++){  // make the calibration take about 10 seconds
+    qtra.calibrate();       // reads all sensors 10 times at 2.5 ms per six sensors (i.e. ~25 ms per call)
+  }
+  delay(2000);
+}
+
+void Inicializacion_Pines(){
+  pinMode(PWMD,OUTPUT);
+  pinMode(PWMI,OUTPUT);
+  pinMode(D3,OUTPUT);
+  pinMode(D8,OUTPUT);
+  pinMode(MInit,INPUT);
 }
