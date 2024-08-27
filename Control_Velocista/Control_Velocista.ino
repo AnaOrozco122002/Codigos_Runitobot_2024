@@ -28,9 +28,9 @@ unsigned int sensorValues[NUM_SENSORS];
 
 //Variables para el controlador
 float Tm = 9.0;                                            //tiempo de muestreo en mili segundos
-float Referencia=0.0, Control=0.0, Kp = 2.5, Ti = 0.0, Td = 0.095; 
+float Referencia=0.0, Control=0.0, Kp = 2.5, Ti = 0.0, Td = 0.0; 
 float Salida=0.0, Error=0.0, Error_ant=0.0;                       //variables de control
-float offset = 1.0, Vmax = 0.0;
+float offset = 1, Vmax = 250;
 char caracter; String datos;   //  sintonizacion bluetooth
 int d1, d2, d3,d4;                //  sintonizacion bluetooth
 String S_Kp, S_Ti, S_Td, S_Vmax;       //  sintonizacion bluetooth
@@ -64,19 +64,20 @@ void loop() {
   //if(Serial.available()) { Sintonia_Bluetooth();} 
   //Serial.println("Inicio");
   Estado=digitalRead(MInit);
-  if(Estado == HIGH){
+  /*if(Estado == HIGH){
     Serial.println("Start");
   }
   else{
     Serial.println("Stop");
-  }
+  }*/
   Tinicio    = millis();                                        // toma el valor en milisengundos
   Salida     = Lectura_Sensor();                                // funcion de lectura de la variable salida del  proceso
   Control    = Controlador(Referencia,Salida);                  // funcion de la ley de control 
   Esfuerzo_Control(Control);                                    // funcion encargada de enviar el esfuerzo de control
   Tm = Tiempo_Muestreo(Tinicio); 
-  //Serial.println("Girar");
-  myTurbina.write(150);
+  Serial.print("Control: ");
+  Serial.println(Control);
+  myTurbina.write(50);
 
 }
 
@@ -109,9 +110,13 @@ void Esfuerzo_Control(float Control) {                            //envia el esf
 
   s1  = (offset - Control);  
   s2  = (offset + Control);
-  //Serial.print(s1); Serial.print("     "); Serial.println(s2);
-  ledcWrite(Canales[0],   constrain(abs(s1), 0.0, 1.0)* Vmax);
-  ledcWrite(Canales[1], constrain(abs(s2), 0.0, 1.0)* Vmax);
+  
+  ledcWrite(Canales[0], floor(constrain(abs(s1), 0.0, 1.0)* Vmax));
+  ledcWrite(Canales[1], floor(constrain(abs(s2), 0.0, 1.0)* Vmax));
+  Serial.print("Derecha: ");
+  Serial.print(floor(constrain(abs(s1), 0.0, 1.0)* Vmax));
+  Serial.print("Izquierda: ");
+  Serial.print(floor(constrain(abs(s2), 0.0, 1.0)* Vmax));
 
    if( s1 <= 0.0 ){// Motor Derecho
     digitalWrite(D8,LOW);}
@@ -119,8 +124,8 @@ void Esfuerzo_Control(float Control) {                            //envia el esf
    
   
   if( s2 <= 0.0 ){ //Motor Izquierdo
-    digitalWrite(D3,LOW);}
-  else{digitalWrite(D3,HIGH);}
+    digitalWrite(D3,HIGH);}
+  else{digitalWrite(D3,LOW);}
 } 
 
 unsigned long int Tiempo_Muestreo(unsigned long int Tinicio){//, unsigned int Tm){ // Funcion que asegura que el tiempo de muestreo sea el mismo siempre
