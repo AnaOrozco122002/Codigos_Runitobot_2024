@@ -90,7 +90,7 @@ class MyCallbacks_1: public BLECharacteristicCallbacks {
           int d1 = datos.indexOf(',');
           String S_Kp = datos.substring(1, d1);
           int d2 = datos.indexOf(',', d1 + 1);
-          String S_Ti = datos.substring(d1 + 2, d2);
+          String S_Ti = datos.substring(d1 + 1, d2);
           int d3 = datos.indexOf(',', d2 + 1);
           String S_Td = datos.substring(d2 + 1, d3);
 
@@ -148,7 +148,7 @@ void setup() {
 
 void loop() {
   Estado=digitalRead(MInit);
-  Estado=1;
+  //Estado=1;
   while(Estado){
     Estado=digitalRead(MInit);
     Tinicio    = millis();                                        // toma el valor en milisengundos
