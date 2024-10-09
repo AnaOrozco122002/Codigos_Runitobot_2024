@@ -393,12 +393,6 @@ const unsigned char* coronaallArray[10] = {
 int frame = 0;
 int invert = 0;
 
-
-
-
-
-
-
 //Valores del Control
 float LHoN=0,R2=0,L2=0,CRight=0,CLeft=0;
 
@@ -411,13 +405,6 @@ const byte MotorC[]={23,18,19};
 const byte MotorD[]={32,26,25};
 
 
-
-
-/*//Controlador Motores
-const byte MotorA[]={13,27,12};
-const byte MotorB[]={5,19,18};
-const byte MotorC[]={23,21,22};
-const byte MotorD[]={32,26,25};*/
 
 //Creación del PWM para la ESP32
 const uint16_t Frecuencia = 5000;
