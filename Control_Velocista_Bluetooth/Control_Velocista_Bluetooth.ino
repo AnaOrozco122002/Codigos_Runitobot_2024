@@ -21,7 +21,7 @@ BLECharacteristic *pCharacteristic_4;
 BLECharacteristic *pCharacteristic_5;
 
 //Modulo de Inicio
-const byte MInit=D5;
+const byte MInit=D6;
 int Estado;
 
 //TURBINA
@@ -29,7 +29,7 @@ int Estado;
 Servo myTurbina;
 
 //PIN PARA EL CONTROL DE TURBINA
-const byte Tur=D6;
+const byte Tur=D5;
 
 //Variables para sensores
 #define NUM_SENSORS             16  // Numero de sensores usados
@@ -58,10 +58,8 @@ const uint16_t Frecuencia = 5000;
 const byte Canales[] ={0,1};
 const byte Resolucion = 10;
 
-const int  PWMD = D4;                                             // Definición Pin 6 PWM Motor Derecho
-const int  PWMI = D8;
-const int  DirD = D3;
-const int  DirI = D7;  
+const int  PWMD = D7;                                             // Definición Pin 6 PWM Motor Derecho
+const int  PWMI = D4;  
 
 
 
@@ -115,7 +113,6 @@ class MyCallbacks_1: public BLECharacteristicCallbacks {
 
 class MyCallbacks_2: public BLECharacteristicCallbacks {
 };
-
 
 class MyCallbacks_3: public BLECharacteristicCallbacks {
 };
@@ -208,13 +205,13 @@ void Esfuerzo_Control(float Control) {                            //envia el esf
   Serial.print(floor(constrain(abs(s2), 0.0, 1.0)* Vmax));*/
 
    if( s1 <= 0.0 ){// Motor Derecho
-    digitalWrite(DirD,HIGH);}
-  else{digitalWrite(DirD,LOW);}                   
+    digitalWrite(D8,HIGH);}
+  else{digitalWrite(D8,LOW);}                   
    
   
   if( s2 <= 0.0 ){ //Motor Izquierdo
-    digitalWrite(DirI,HIGH);}
-  else{digitalWrite(DirI,LOW);}
+    digitalWrite(D3,HIGH);}
+  else{digitalWrite(D3,LOW);}
 } 
 
 unsigned long int Tiempo_Muestreo(unsigned long int Tinicio){//, unsigned int Tm){ // Funcion que asegura que el tiempo de muestreo sea el mismo siempre
